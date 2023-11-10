@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #
-# Bash script for creating backups of Nextcloud.
+# Bash script for creating backups of Nextcloud. This Script is based on the work of https://codeberg.org/DecaTec/Nextcloud-Backup-Restore
 #
-# Version 3.1.0
+# Version 3.2.0
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
-#	- rsync for using incremental backups of files
+#	- rsync for using noncopmpressed backups.
 #
 # Supported database systems:
 # 	- MySQL/MariaDB
@@ -59,9 +59,6 @@ if [ -n "$_backupMainDir" ]; then
 fi
 
 currentDate=$(date +"%Y%m%d_%H%M%S")
-
-# BWA get latest backup folder for rsync backup
-last_backup=$(ls -ltr $backupMainDir | cut -f 10 -d " " | tail -1 | cut -f 10 -d " " | tail -1)
 
 # The actual directory of the current backup - this is a subdirectory of the main directory above with a timestamp
 backupDir="${backupMainDir}/${currentDate}"
@@ -147,18 +144,13 @@ if [ "$useCompression" = true ] ; then
 		`$compressionCommand "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .`
 	fi
 else
-	if [ "$use_rsync" = true ]; then
-		if [ "$includeNextcloudDataDir" = false ]; then
-			$RSync_BackupCommand --link-dest "$last_backup" "${nextcloudFileDir}" "${backupDir}/nextcloud-filedir" --exclude="./data/*" .
-		else
-			$RSync_BackupCommand --link-dest "$last_backup" "${nextcloudFileDir}" "${backupDir}/nextcloud-filedir" .
-		fi
-	else	
-		if [ "$includeNextcloudDataDir" = false ]; then
-			tar -cpf "${backupDir}/${fileNameBackupFileDir}" --exclude="./data/*" -C "${nextcloudFileDir}" .
-		else
-			tar -cpf "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
-		fi
+	if [ "$includeNextcloudDataDir" = false ]; then
+		#tar -cpf "${backupDir}/${fileNameBackupFileDir}" --exclude="./data/*" -C "${nextcloudFileDir}" .
+		rsync -aug "${nextcloudFileDir}" "${backupDir}/${folderNameBackupFileDir}" --exclude "./data/*" 
+	else
+		#tar -cpf "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
+		
+		rsync -aug "${nextcloudFileDir}" "${backupDir}/${folderNameBackupFileDir}"  
 	fi
 fi
 
@@ -174,30 +166,23 @@ elif [[ "${nextcloudDataDir}" = "${nextcloudFileDir}"* ]] && [ "$includeNextclou
 	echo "$(date +"%H:%M:%S"): Skipping backup of Nextcloud data directory (already included in file directory backup)!"
 else
 	echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud data directory..."
-	
-	if [ "$use_rsync" = true ]; then
-		if [ "$includeUpdaterBackups" = false ]; then
-			$RSync_BackupCommand --link-dest "$last_backup" "${nextcloudDataDir}" "${backupDir}/nextcloud-datadir" --exclude="updater-*/backups/*" .
+
+	if [ "$includeUpdaterBackups" = false ] ; then
+		echo "Ignoring Nextcloud updater backup directory"
+
+		if [ "$useCompression" = true ] ; then
+			`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
 		else
-			$RSync_BackupCommand --link-dest "$last_backup" "${nextcloudDataDir}" "${backupDir}/nextcloud-datadir" .
+		rsync -aug "${nextcloudDataDir}" "${backupDir}/${folderNameBackupDataDir}" --exclude "updater-*/backups/*"
+			#tar -cpf "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
 		fi
-	else	
-		if [ "$includeUpdaterBackups" = false ] ; then
-			echo "Ignoring Nextcloud updater backup directory"
-	
-			if [ "$useCompression" = true ] ; then
-				`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
-			else
-				tar -cpf "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
-			fi
+	else
+		if [ "$useCompression" = true ] ; then
+			`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .`
 		else
-			if [ "$useCompression" = true ] ; then
-				`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .`
-			else
-				tar -cpf "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
-			fi
+			tar -cpf "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
 		fi
-	fi	
+	fi
 fi
 
 echo "Done"

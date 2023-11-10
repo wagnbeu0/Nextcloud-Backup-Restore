@@ -1,13 +1,13 @@
 #!/bin/bash
 
 #
-# Bash script for restoring backups of Nextcloud.
+# Bash script for restoring backups of Nextcloud. This work based on the work of https://codeberg.org/DecaTec/Nextcloud-Backup-Restore
 #
-# Version 3.1.0
+# Version 3.2.0
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
-#
+#	- rsync for restoring files from incremental backups
 # Supported database systems:
 # 	- MySQL/MariaDB
 # 	- PostgreSQL
@@ -168,7 +168,8 @@ echo "$(date +"%H:%M:%S"): Restoring Nextcloud file directory..."
 if [ "$useCompression" = true ] ; then
   `$extractCommand "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"`
 else
-  tar -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+  #tar -xmpf "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"
+  rsync -avg "${currentRestoreDir}/${folderNameBackupFileDir}/" "${nextcloudFileDir}/"
 fi
 
 echo "Done"
@@ -177,11 +178,11 @@ echo
 # Data directory
 if [ "$includeNextcloudDataDir" = true ] ; then
   echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
-
 	if [ "$useCompression" = true ] ; then
-    `$extractCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
+    		`$extractCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
 	else
-    tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+    		#tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+    		rsync -avg "${currentRestoreDir}/${folderNameBackupDataDir}/" "${nextcloudDataDir}/"
 	fi
 else
   echo "$(date +"%H:%M:%S"): Nextcloud data directory not included in backup, skipping data directory restore..."
