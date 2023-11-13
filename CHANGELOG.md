@@ -1,9 +1,12 @@
 # Changelog
 
+## 3.3.0 
+Use rsync for backups instead of tar, compressed backups disabled by default
+
 ## 3.2.0
 
 ### RSYNC
-User RSync to be prepared for incremental backups
+Use RSync to be prepared for incremental backups
 
 ### General
 
