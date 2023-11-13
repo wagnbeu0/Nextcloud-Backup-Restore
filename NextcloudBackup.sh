@@ -146,11 +146,11 @@ if [ "$useCompression" = true ] ; then
 else
 	if [ "$includeNextcloudDataDir" = false ]; then
 		#tar -cpf "${backupDir}/${fileNameBackupFileDir}" --exclude="./data/*" -C "${nextcloudFileDir}" .
-		rsync -aug "${nextcloudFileDir}" "${backupDir}/${folderNameBackupFileDir}" --exclude "./data/*" 
+		rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "./data/*" 
 	else
 		#tar -cpf "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
 		
-		rsync -aug "${nextcloudFileDir}" "${backupDir}/${folderNameBackupFileDir}"  
+		rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/"  
 	fi
 fi
 
@@ -173,7 +173,7 @@ else
 		if [ "$useCompression" = true ] ; then
 			`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
 		else
-		rsync -aug "${nextcloudDataDir}" "${backupDir}/${folderNameBackupDataDir}" --exclude "updater-*/backups/*"
+		rsync -aug "${nextcloudDataDir}/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"
 			#tar -cpf "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
 		fi
 	else

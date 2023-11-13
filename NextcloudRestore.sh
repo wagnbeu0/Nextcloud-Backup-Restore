@@ -177,12 +177,17 @@ echo
 
 # Data directory
 if [ "$includeNextcloudDataDir" = true ] ; then
-  echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
-	if [ "$useCompression" = true ] ; then
-    		`$extractCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
+
+	if [[ "${nextcloudDataDir}" = "${nextcloudFileDir}"* ]] && [ "$includeNextcloudDataDir" = true ]; then
+	echo "$(date +"%H:%M:%S"): Skipping backup of Nextcloud data directory (already included in file directory backup)!"
 	else
-    		#tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
-    		rsync -avg "${currentRestoreDir}/${folderNameBackupDataDir}/" "${nextcloudDataDir}/"
+		echo "$(date +"%H:%M:%S"): Restoring Nextcloud data directory..."
+		if [ "$useCompression" = true ] ; then
+	    		`$extractCommand "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"`
+		else
+	    		#tar -xmpf "${currentRestoreDir}/${fileNameBackupDataDir}" -C "${nextcloudDataDir}"
+	    		rsync -avg "${currentRestoreDir}/${folderNameBackupDataDir}/" "${nextcloudDataDir}/"
+		fi
 	fi
 else
   echo "$(date +"%H:%M:%S"): Nextcloud data directory not included in backup, skipping data directory restore..."
