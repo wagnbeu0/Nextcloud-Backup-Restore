@@ -19,6 +19,7 @@ With these scripts, all these elements can be included in a backup.
 ## Requirements
 
 - *pigz* (https://zlib.net/pigz/) when using backup compression. If not installed already, it can be installed with `apt install pigz` (Debian/Ubuntu). If not available, you can use another compression algorithm (e.g. gzip)
+- *rsync* when using incremental backups. If not installed already, it can be installed with `apt install rsync` (Debian/Ubuntu).
 
 ## Important notes about using the scripts
 
