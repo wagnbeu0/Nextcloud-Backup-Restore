@@ -199,6 +199,10 @@ dbUser=$(occ_get dbuser)
 # Database password
 dbPassword=$(occ_get dbpassword)
 
+# Folder names for backup files
+folderNameBackupFileDir='nextcloud-filedir'
+folderNameBackupDataDir='nextcloud-datadir'
+
 # File names for backup files
 fileNameBackupFileDir='nextcloud-filedir.tar'
 fileNameBackupDataDir='nextcloud-datadir.tar'
@@ -244,6 +248,8 @@ fileNameBackupDb='nextcloud-db.sql'
   echo "fileNameBackupDataDir='$fileNameBackupDataDir'"
   echo "fileNameBackupExternalDataDir='$fileNameBackupExternalDataDir'"
   echo "fileNameBackupDb='$fileNameBackupDb'"
+  echo "folderNameBackupFileDir='$folderNameBackupFileDir'"
+  echo "folderNameBackupDataDir='$folderNameBackupDataDir'"
   echo ""
   echo "# TODO: The directory of your Nextcloud installation (this is a directory under your web root)"
   echo "nextcloudFileDir='$nextcloudFileDir'"
