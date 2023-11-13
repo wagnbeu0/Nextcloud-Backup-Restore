@@ -30,7 +30,7 @@ backupMainDir='/media/hdd/nextcloud_backup'
 nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
-useCompression=true
+useCompression=false
 includeUpdaterBackups=false
 includeNextcloudDataDir=true
 
