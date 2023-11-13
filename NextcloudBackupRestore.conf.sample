@@ -13,7 +13,7 @@ backupMainDir='/media/hdd/nextcloud_backup'
 # When this is the only script for backups, it is recommend to enable compression.
 # If the output of this script is used in another (compressing) backup (e.g. borg backup),
 # you should probably disable compression here and only enable compression of your main backup script.
-useCompression=true
+useCompression=false
 
 # TOOD: The bare tar command for using compression while backup.
 # Use 'tar -cpzf' if you want to use gzip compression.

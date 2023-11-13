@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud. This Script is based on the work of https://codeberg.org/DecaTec/Nextcloud-Backup-Restore
 #
-# Version 3.2.0
+# Version 3.3.0
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -139,18 +139,29 @@ echo "$(date +"%H:%M:%S"): Creating backup of Nextcloud file directory..."
 
 if [ "$useCompression" = true ] ; then
 	if [ "$includeNextcloudDataDir" = false ]; then
+		echo "$(date +"%H:%M:%S"): Creating compressed tar backup of Nextcloud file directory without data subfolder..."
 		`$compressionCommand "${backupDir}/${fileNameBackupFileDir}" --exclude="./data/*" -C "${nextcloudFileDir}" .`
 	else
+		echo "$(date +"%H:%M:%S"): Creating compressed tar backup of Nextcloud file directory with data subfolder..."
 		`$compressionCommand "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .`
 	fi
 else
 	if [ "$includeNextcloudDataDir" = false ]; then
-		#tar -cpf "${backupDir}/${fileNameBackupFileDir}" --exclude="./data/*" -C "${nextcloudFileDir}" .
-		rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "./data/*" 
+		if [ -d "${backupMainDir}/latest" ]; then
+			echo "$(date +"%H:%M:%S"): Create incremental backup using rsync without data subfolder..."
+			rsync -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "./data/*" 
+		else
+			echo "$(date +"%H:%M:%S"): Create full backup using rsync without data subfolder..."
+			rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "./data/*" 
+		fi
 	else
-		#tar -cpf "${backupDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}" .
-		
-		rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/"  
+		if [ -d "${backupMainDir}/latest" ]; then
+			echo "$(date +"%H:%M:%S"): Create incremental backup using rsync with data subfolder..."
+			rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" 
+		else
+			echo "$(date +"%H:%M:%S"): Create full backup using rsync with data subfolder..."
+			rsync -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupFileDir}/" 
+		fi
 	fi
 fi
 
@@ -171,16 +182,29 @@ else
 		echo "Ignoring Nextcloud updater backup directory"
 
 		if [ "$useCompression" = true ] ; then
+			echo "$(date +"%H:%M:%S"): Creating compressed tar backup"
 			`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .`
 		else
-		rsync -aug "${nextcloudDataDir}/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"
-			#tar -cpf "${backupDir}/${fileNameBackupDataDir}"  --exclude="updater-*/backups/*" -C "${nextcloudDataDir}" .
+			if [ -d "${backupMainDir}/latest" ]; then
+			echo "$(date +"%H:%M:%S"): Creating incremental rsync backup"
+			rsync -aug "${nextcloudDataDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"			
+			else
+c
+			rsync -aug "${nextcloudDataDir}/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"
+			fi	
 		fi
 	else
 		if [ "$useCompression" = true ] ; then
+			echo "$(date +"%H:%M:%S"): Creating compressed tar backup"
 			`$compressionCommand "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .`
 		else
-			tar -cpf "${backupDir}/${fileNameBackupDataDir}"  -C "${nextcloudDataDir}" .
+			if [ -d "${backupMainDir}/latest" ]; then
+			echo "$(date +"%H:%M:%S"): Creating incremental rsync backup"
+			rsync -aug "${nextcloudDataDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupDataDir}/"			
+			else
+			echo "$(date +"%H:%M:%S"): Creating incremental rsync backup"
+			rsync -aug "${nextcloudDataDir}/" "${backupDir}/${folderNameBackupDataDir}/"
+			fi
 		fi
 	fi
 fi
@@ -272,5 +296,9 @@ fi
 echo
 echo "DONE!"
 echo "$(date +"%H:%M:%S"): Backup created: ${backupDir}"
+
+# Set this backup as latest
+rm -rf "${backupMainDir}/latest"
+ln -s "${backupDir}" "${backupMainDir}/latest"
 
 set +Eeuo pipefail
