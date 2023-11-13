@@ -6,7 +6,7 @@
 # Version 3.3.0
 #
 # Usage:
-# 	- call the setup.sh script
+#   - call the setup.sh script
 #   - Enter the required information
 #   - A central configuration file `NextcloudBackupRestore.conf` will be created to match you Nextcloud instance.
 #   - This configuration file then is used by the backup/restore scripts.
@@ -30,7 +30,7 @@ backupMainDir='/media/hdd/nextcloud_backup'
 nextcloudFileDir='/var/www/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
-useCompression=true
+useCompression=false
 includeUpdaterBackups=false
 includeNextcloudDataDir=true
 
