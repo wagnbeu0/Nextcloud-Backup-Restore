@@ -36,7 +36,7 @@ With these scripts, all these elements can be included in a backup.
 
 ## Setup
 
-1. Clone the repository: `git clone https://github.com/wagnbeu0/Nextcloud-Backup-Restore.git)`
+1. Clone the repository: `git clone https://github.com/wagnbeu0/Nextcloud-Backup-Restore`
 2. Set permissions:
     - `chown -R root Nextcloud-Backup-Restore`
     - `cd Nextcloud-Backup-Restore`
