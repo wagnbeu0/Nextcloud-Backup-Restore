@@ -28,9 +28,12 @@ fileNameBackupFileDir='nextcloud-filedir.tar.gz'
 fileNameBackupDataDir='nextcloud-datadir.tar.gz'
 fileNameBackupExternalDataDir=''
 fileNameBackupDb='nextcloud-db.sql'
+folderNameBackupFileDir='nextcloud-filedir'
+folderNameBackupDataDir='nextcloud-datadir'
+
 
 # TODO: The directory of your Nextcloud installation (this is a directory under your web root)
-nextcloudFileDir='/var/www/nextcloud'
+nextcloudFileDir='/var/www/html/nextcloud'
 
 # TODO: The directory of your Nextcloud data directory (outside the Nextcloud file directory)
 # If your data directory is located under Nextcloud's file directory (somewhere in the web root),
