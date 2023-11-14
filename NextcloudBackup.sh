@@ -189,7 +189,6 @@ else
 			echo "$(date +"%H:%M:%S"): Creating incremental rsync backup"
 			rsync -aug "${nextcloudDataDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"			
 			else
-c
 			rsync -aug "${nextcloudDataDir}/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"
 			fi	
 		fi
