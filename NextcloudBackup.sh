@@ -3,7 +3,7 @@
 #
 # Bash script for creating backups of Nextcloud. This Script is based on the work of https://codeberg.org/DecaTec/Nextcloud-Backup-Restore
 #
-# Version 3.3.0
+# Version 3.3.1
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -149,18 +149,18 @@ else
 	if [ "$includeNextcloudDataDir" = false ]; then
 		if [ -d "${backupMainDir}/latest" ]; then
 			echo "$(date +"%H:%M:%S"): Create incremental backup using rsync without data subfolder..."
-			rsync -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "./data/*" 
+			rsync -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "data/*" 
 		else
 			echo "$(date +"%H:%M:%S"): Create full backup using rsync without data subfolder..."
-			rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "./data/*" 
+			rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "data/*" 
 		fi
 	else
 		if [ -d "${backupMainDir}/latest" ]; then
 			echo "$(date +"%H:%M:%S"): Create incremental backup using rsync with data subfolder..."
-			rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" 
+			rsync -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupFileDir}/" 
 		else
 			echo "$(date +"%H:%M:%S"): Create full backup using rsync with data subfolder..."
-			rsync -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/" "${backupDir}/${folderNameBackupFileDir}/" 
+			rsync -aug "${nextcloudFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" 
 		fi
 	fi
 fi

@@ -7,7 +7,7 @@
 # Simply copy the sample file (`cp NextcloudBackupRestore.conf.sample NextcloudBackupRestore.conf`) and edit the file accordingly.
 
 # TODO: The main backup directory
-backupMainDir='/media/hdd/nextcloud_backup'
+backupMainDir='/backup'
 
 # TODO: Use compression for file/data dir
 # When this is the only script for backups, it is recommend to enable compression.
