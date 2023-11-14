@@ -3,7 +3,7 @@
 #
 # Bash script for restoring backups of Nextcloud. This work based on the work of https://codeberg.org/DecaTec/Nextcloud-Backup-Restore
 #
-# Version 3.3.0
+# Version 3.3.1
 #
 # Requirements:
 #	- pigz (https://zlib.net/pigz/) for using backup compression. If not available, you can use another compression algorithm (e.g. gzip)
@@ -168,7 +168,7 @@ echo "$(date +"%H:%M:%S"): Restoring Nextcloud file directory..."
 if [ "$useCompression" = true ] ; then
   `$extractCommand "${currentRestoreDir}/${fileNameBackupFileDir}" -C "${nextcloudFileDir}"`
 else
-  rsync -avg "${currentRestoreDir}/${folderNameBackupFileDir}/" "${nextcloudFileDir}/"
+  rsync -aug "${currentRestoreDir}/${folderNameBackupFileDir}/" "${nextcloudFileDir}/"
 fi
 
 echo "Done"

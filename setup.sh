@@ -3,7 +3,7 @@
 #
 # Bash script for an easy setup of Nextcloud backup/restore scripts.
 #
-# Version 3.3.0
+# Version 3.3.1
 #
 # Usage:
 #   - call the setup.sh script
@@ -26,8 +26,8 @@ set -Eeuo pipefail
 #
 # Pre defined variables
 #
-backupMainDir='/media/hdd/nextcloud_backup'
-nextcloudFileDir='/var/www/nextcloud'
+backupMainDir='/backup'
+nextcloudFileDir='/var/www/html/nextcloud'
 webserverUser='www-data'
 webserverServiceName='nginx'
 useCompression=false
@@ -86,10 +86,17 @@ read -p "Enter an new webserver service name or press ENTER if the webserver ser
 clear
 
 echo ""
-read -p "Should the backed up data be compressed (pigz should be installed in the machine)? [Y/n]: " USECOMPRESSION
+read -p "Should the backed up data be compressed (pigz should be installed in the machine)? [N/y]: " USECOMPRESSION
+if [ "$USECOMPRESSION" == 'Y' ] ; then
+  useCompression=true
+fi
 
-if [ "$USECOMPRESSION" == 'n' ] ; then
-  useCompression=false
+clear
+
+echo ""
+read -p "Should the backup include the data folder? RECOMMENDED to avoid inconsistent backups [Y/n]: " INCLUDENEXTCLOUDDATADIR
+if [ "$INCLUDENEXTCLOUDDATADIR" == 'n' ] ; then
+  includeNextcloudDataDir=false
 fi
 
 clear
@@ -130,6 +137,12 @@ if [ "$useCompression" = true ] ; then
 	echo "Compression: yes"
 else
   echo "Compression: no"
+fi
+
+if [ "$includeNextcloudDataDir" = true ] ; then
+	echo "Include Nextcloud Data dir: yes"
+else
+  echo "Include Nextcloud Data dir: no"
 fi
 
 if [ "$includeUpdaterBackups" = true ] ; then
@@ -233,7 +246,7 @@ fileNameBackupDb='nextcloud-db.sql'
   echo "# When this is the only script for backups, it is recommend to enable compression."
   echo "# If the output of this script is used in another (compressing) backup (e.g. borg backup),"
   echo "# you should probably disable compression here and only enable compression of your main backup script."
-  echo "useCompression=true"
+  echo "useCompression=$useCompression"
   echo ""
   echo "# TOOD: The bare tar command for using compression while backup."
   echo "# Use 'tar -cpzf' if you want to use gzip compression."
@@ -292,7 +305,7 @@ fileNameBackupDb='nextcloud-db.sql'
   echo "# OPTIONAL: Setting to include/exclude the Nextcloud data directory"
   echo "# Set to false to exclude the Nextcloud data directory from backup"
   echo "# WARNING: Excluding the data directory is NOT RECOMMENDED as it leaves the backup in an inconsistent state and may result in data loss!"
-  echo "includeNextcloudDataDir=true"
+  echo "includeNextcloudDataDir=$includeNextcloudDataDir"
 
 } > ./"${NextcloudBackupRestoreConf}"
 

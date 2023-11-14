@@ -1,5 +1,10 @@
 # Changelog
 
+### 3.3.1
+- fixed setup.sh: which has parameter `useCompression` for compressed backups statically set
+- fixed setup.sh: which now asks if parameter `includeNextcloudDataDir` should be included in Backup
+- fixed Nextcloud Backup.sh which now exludes data dir if not wanted in backup
+
 ## 3.3.0
 - Use rsync as default for backups
 - Disabled compressed backups to enable incremental sync backups
