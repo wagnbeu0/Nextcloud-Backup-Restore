@@ -149,11 +149,11 @@ else
 	if [ "$includeNextcloudDataDir" = false ]; then
 		if [ -d "${backupMainDir}/latest" ]; then
 			echo "$(date +"%H:%M:%S"): Create incremental backup using rsync without data subfolder..."
-			rsync -avug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "data/*" 
+			rsync -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" --exclude "data/*" 
  
 		else
 			echo "$(date +"%H:%M:%S"): Create full backup using rsync without data subfolder..."
-			rsync  -avug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" 
+			rsync  -aug "${nextcloudFileDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupFileDir}/" "${backupDir}/${folderNameBackupFileDir}/" 
  
 		fi
 	else
@@ -189,7 +189,7 @@ else
 		else
 			if [ -d "${backupMainDir}/latest" ]; then
 			echo "$(date +"%H:%M:%S"): Creating incremental rsync backup here"
-+                       rsync -avug "${nextcloudDataDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupDataDir}/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"                 
++                       rsync -aug "${nextcloudDataDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupDataDir}/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"                 
                         else
 			rsync -aug "${nextcloudDataDir}/" "${backupDir}/${folderNameBackupDataDir}/" --exclude "updater-*/backups/*"
 			fi	
@@ -201,7 +201,7 @@ else
 		else
 			if [ -d "${backupMainDir}/latest" ]; then
 			echo "$(date +"%H:%M:%S"): Creating incremental rsync backup"
-			rsync -avug "${nextcloudDataDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupDataDir}" "${backupDir}/${folderNameBackupDataDir}/"                  
+			rsync -aug "${nextcloudDataDir}/" --link-dest "${backupMainDir}/latest/${folderNameBackupDataDir}" "${backupDir}/${folderNameBackupDataDir}/"                  
 			else
 			echo "$(date +"%H:%M:%S"): Creating incremental rsync backup"
 			rsync -aug "${nextcloudDataDir}/" "${backupDir}/${folderNameBackupDataDir}/"
